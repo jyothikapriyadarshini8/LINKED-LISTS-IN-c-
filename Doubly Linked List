@@ -1,0 +1,145 @@
+#include <stdio.h>
+#include <stdlib.h>
+// Define the node structure
+typedef struct Node
+{
+    int data;
+    struct Node* prev;
+    struct Node* next;
+} Node;
+// Function to create a new node
+Node* createNode(int data)
+{
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL)
+    {
+        printf("Memory allocation failed!\n");
+        exit(1);
+    }
+    newNode->data = data;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+// Insert a node at the beginning
+void insertAtHead(Node** head, int data)
+{
+    Node* newNode = createNode(data);
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+    newNode->next = *head;
+    (*head)->prev = newNode;
+    *head = newNode;
+}
+// Insert a node at the end
+void insertAtTail(Node** head, int data)
+{
+    Node* newNode = createNode(data);
+    if (*head == NULL)
+    {
+        *head = newNode;
+        return;
+    }
+    Node* temp = *head;
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+// Delete a node by value
+void deleteNode(Node** head, int key)
+{
+    if (*head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    Node* temp = *head;
+    // Search for the node containing the key
+    while (temp != NULL && temp->data != key)
+    {
+        temp = temp->next;
+    }
+    // Key not found
+    if (temp == NULL)
+    {
+        printf("Element %d not found in the list.\n", key);
+        return;
+    }
+    // Case 1: If head node is to be deleted
+    if (temp == *head)
+    {
+        *head = temp->next;
+    }
+    // Case 2: If it's NOT the last node, update next node's prev pointer
+    if (temp->next != NULL)
+    {
+        temp->next->prev = temp->prev;
+    }
+    // Case 3: If it's NOT the first node, update prev node's next pointer
+    if (temp->prev != NULL)
+    {
+        temp->prev->next = temp->next;
+    }
+    free(temp);
+    printf("Element %d deleted successfully.\n", key);
+}
+// Forward traversal
+void printListForward(Node* head)
+    {
+    Node* temp = head;
+    printf("Forward List: ");
+    while (temp != NULL)
+    {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+// Backward traversal
+void printListBackward(Node* head)
+{
+    if (head == NULL)
+    {
+        printf("Backward List: NULL\n");
+        return;
+    }
+    Node* temp = head;
+    // Go to the last node
+    while (temp->next != NULL) 
+    {
+        temp = temp->next;
+    }
+    printf("Backward List: ");
+    while (temp != NULL)
+    {
+        printf("%d -> ", temp->data);
+        temp = temp->prev;
+    }
+    printf("NULL\n");
+}
+// Driver Code
+int main()
+{
+    Node* head = NULL;
+    // Performing Insertions
+    insertAtTail(&head, 10);
+    insertAtTail(&head, 20);
+    insertAtHead(&head, 5);
+    insertAtTail(&head, 30);
+    // Display original list
+    printListForward(head);
+    printListBackward(head);
+    // Performing Deletions
+    printf("\nDeleting 5 (Head node)...\n");
+    deleteNode(&head, 5);
+    printListForward(head);
+    printf("\nDeleting 30 (Tail node)...\n");
+    deleteNode(&head, 30);
+    printListForward(head);
+    return 0;
+}
